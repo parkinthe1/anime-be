@@ -9,7 +9,7 @@
 
 import { writeFileSync } from 'node:fs';
 
-const const API_BASE = 'https://api.tenrai.org/v1'; = 'https://api.tenrai.org/v1';
+const TENRAI = 'https://api.tenrai.org/v1';
 const TARGET = Math.max(1, parseInt(process.argv[2] || '100', 10));
 const OUT = 'tenrai_import.sql';
 
