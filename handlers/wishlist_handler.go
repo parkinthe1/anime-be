@@ -4,32 +4,32 @@ import (
 	"net/http"
 
 	"aniwave-be/middleware"
-	"aniwave-be/models"
 	"aniwave-be/response"
 )
 
-// GET /api/me/wishlist -> { items: [Anime] }
+type wishlistItem struct {
+	ID int64 `json:"id"` // id ของอนิเมะ (mal_id ของ TENRAI) ชื่อ/โปสเตอร์ FE ไปดึงจาก TENRAI เอง
+}
+
+// GET /api/me/wishlist -> { items: [{ id }] }  (เรียงตามที่เพิ่มล่าสุดก่อน)
 func (h *Handler) ListWishlist(w http.ResponseWriter, r *http.Request) {
 	me := middleware.CurrentMember(r)
 	rows, err := h.DB.QueryContext(r.Context(),
-		`SELECT `+animeSelect+`
-		 FROM wishlist_items wi JOIN anime a ON a.id = wi.anime_id
-		 WHERE wi.member_id = $1
-		 ORDER BY wi.added_at DESC`, me.ID)
+		`SELECT anime_id FROM wishlist_items WHERE member_id = $1 ORDER BY added_at DESC`, me.ID)
 	if err != nil {
 		serverError(w, err)
 		return
 	}
 	defer rows.Close()
 
-	items := make([]models.Anime, 0)
+	items := make([]wishlistItem, 0)
 	for rows.Next() {
-		a, err := scanAnime(rows)
-		if err != nil {
+		var it wishlistItem
+		if err := rows.Scan(&it.ID); err != nil {
 			serverError(w, err)
 			return
 		}
-		items = append(items, a)
+		items = append(items, it)
 	}
 	if err := rows.Err(); err != nil {
 		serverError(w, err)
@@ -42,17 +42,13 @@ func (h *Handler) ListWishlist(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) AddWishlist(w http.ResponseWriter, r *http.Request) {
 	animeID, ok := parseID(r)
 	if !ok {
-		notFoundAnime(w)
+		badAnimeID(w)
 		return
 	}
 	me := middleware.CurrentMember(r)
 	_, err := h.DB.ExecContext(r.Context(),
 		`INSERT INTO wishlist_items (member_id, anime_id) VALUES ($1, $2) ON CONFLICT DO NOTHING`,
 		me.ID, animeID)
-	if isPgCode(err, "23503") {
-		notFoundAnime(w)
-		return
-	}
 	if err != nil {
 		serverError(w, err)
 		return

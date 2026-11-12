@@ -13,11 +13,9 @@ import (
 
 // ทุก endpoint ในไฟล์นี้ถูกครอบด้วย RequireAdmin ใน router: ไม่ login = 401, เป็น member = 403
 
+// id = mal_id ของ TENRAI ไม่ join ตาราง anime เพราะ id อาจไปตรงกับเรื่องอื่นในรายการของทีม (FE ไปดึงชื่อจาก TENRAI เอง)
 type topVotedItem struct {
 	ID          int64   `json:"id"`
-	Title       string  `json:"title"`
-	TitleTh     *string `json:"titleTh"`
-	Poster      *string `json:"poster"`
 	VoteAverage float64 `json:"voteAverage"`
 	VoteCount   int     `json:"voteCount"`
 }
@@ -50,9 +48,9 @@ func (h *Handler) AdminStats(w http.ResponseWriter, r *http.Request) {
 	}
 
 	top, err := h.DB.QueryContext(ctx, `
-		SELECT a.id, a.title, a.title_th, a.poster, ROUND(AVG(v.score), 1)::float8 AS avg_score, COUNT(*) AS vote_count
-		FROM anime a JOIN votes v ON v.anime_id = a.id
-		GROUP BY a.id
+		SELECT v.anime_id, ROUND(AVG(v.score), 1)::float8 AS avg_score, COUNT(*) AS vote_count
+		FROM votes v
+		GROUP BY v.anime_id
 		ORDER BY avg_score DESC, vote_count DESC
 		LIMIT 5`)
 	if err != nil {
@@ -62,7 +60,7 @@ func (h *Handler) AdminStats(w http.ResponseWriter, r *http.Request) {
 	defer top.Close()
 	for top.Next() {
 		var t topVotedItem
-		if err := top.Scan(&t.ID, &t.Title, &t.TitleTh, &t.Poster, &t.VoteAverage, &t.VoteCount); err != nil {
+		if err := top.Scan(&t.ID, &t.VoteAverage, &t.VoteCount); err != nil {
 			serverError(w, err)
 			return
 		}
@@ -276,7 +274,7 @@ func (h *Handler) AdminUpdateAnime(w http.ResponseWriter, r *http.Request) {
 	response.JSON(w, http.StatusOK, a)
 }
 
-// DELETE /api/admin/anime/{id} -> 204 (รีวิว/คะแนน/wishlist ของเรื่องนี้ถูกลบตามด้วย ON DELETE CASCADE)
+// DELETE /api/admin/anime/{id} -> 204 (รีวิว/คะแนน/wishlist ไม่ถูกลบ เพราะอ้างด้วย id ของ TENRAI ไม่ใช่ id ในตาราง anime)
 func (h *Handler) AdminDeleteAnime(w http.ResponseWriter, r *http.Request) {
 	id, ok := parseID(r)
 	if !ok {

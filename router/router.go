@@ -26,6 +26,7 @@ func New(h *handlers.Handler, a *middleware.Authenticator, corsOrigins []string)
 	mux.HandleFunc("GET /api/anime", h.ListAnime)
 	mux.HandleFunc("GET /api/anime/{id}", h.GetAnime)
 	mux.HandleFunc("GET /api/anime/{id}/reviews", h.ListReviews)
+	mux.HandleFunc("GET /api/anime/{id}/stats", h.AnimeStats)
 
 	// ---------- member ----------
 	mux.Handle("GET /api/me", member(h.GetMe))

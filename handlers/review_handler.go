@@ -65,7 +65,7 @@ func (h *Handler) ListReviews(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) CreateReview(w http.ResponseWriter, r *http.Request) {
 	animeID, ok := parseID(r)
 	if !ok {
-		notFoundAnime(w)
+		badAnimeID(w)
 		return
 	}
 	var in struct {
@@ -94,10 +94,6 @@ func (h *Handler) CreateReview(w http.ResponseWriter, r *http.Request) {
 		`INSERT INTO reviews (member_id, anime_id, text) VALUES ($1, $2, $3) RETURNING id, text, created_at`,
 		me.ID, animeID, text,
 	).Scan(&out.ID, &out.Text, &out.CreatedAt)
-	if isPgCode(err, "23503") { // foreign key: ไม่มีอนิเมะเรื่องนี้
-		notFoundAnime(w)
-		return
-	}
 	if err != nil {
 		serverError(w, err)
 		return
@@ -109,7 +105,7 @@ func (h *Handler) CreateReview(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) PutVote(w http.ResponseWriter, r *http.Request) {
 	animeID, ok := parseID(r)
 	if !ok {
-		notFoundAnime(w)
+		badAnimeID(w)
 		return
 	}
 	var in struct {
@@ -128,10 +124,6 @@ func (h *Handler) PutVote(w http.ResponseWriter, r *http.Request) {
 		`INSERT INTO votes (member_id, anime_id, score) VALUES ($1, $2, $3)
 		 ON CONFLICT (member_id, anime_id) DO UPDATE SET score = EXCLUDED.score, updated_at = now()`,
 		me.ID, animeID, in.Score)
-	if isPgCode(err, "23503") {
-		notFoundAnime(w)
-		return
-	}
 	if err != nil {
 		serverError(w, err)
 		return

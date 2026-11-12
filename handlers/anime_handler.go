@@ -75,3 +75,25 @@ func (h *Handler) GetAnime(w http.ResponseWriter, r *http.Request) {
 	}
 	response.JSON(w, http.StatusOK, d)
 }
+
+// GET /api/anime/{id}/stats -> { voteCount, voteAverage }  (guest ดูได้)
+// id = mal_id ของ TENRAI ยังไม่มีใครโหวต = voteCount 0 และ voteAverage null
+func (h *Handler) AnimeStats(w http.ResponseWriter, r *http.Request) {
+	id, ok := parseID(r)
+	if !ok {
+		badAnimeID(w)
+		return
+	}
+
+	var out struct {
+		VoteCount   int      `json:"voteCount"`
+		VoteAverage *float64 `json:"voteAverage"`
+	}
+	if err := h.DB.QueryRowContext(r.Context(),
+		`SELECT COUNT(*), ROUND(AVG(score), 1)::float8 FROM votes WHERE anime_id = $1`, id,
+	).Scan(&out.VoteCount, &out.VoteAverage); err != nil {
+		serverError(w, err)
+		return
+	}
+	response.JSON(w, http.StatusOK, out)
+}

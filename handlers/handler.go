@@ -67,6 +67,12 @@ func serverError(w http.ResponseWriter, err error) {
 	response.Error(w, http.StatusInternalServerError, "เซิร์ฟเวอร์ผิดพลาด ลองใหม่อีกครั้ง")
 }
 
+// id ของอนิเมะที่สมาชิกให้คะแนน/รีวิว/เก็บ wishlist คือ mal_id ของ TENRAI (FE ดึงข้อมูลเรื่องจาก TENRAI เอง)
+// ตารางของเราจึงไม่มีข้อมูลเรื่องนั้นให้ตรวจ ตรวจได้แค่ว่าเป็นเลขจำนวนเต็มบวก
+func badAnimeID(w http.ResponseWriter) {
+	response.Error(w, http.StatusBadRequest, "id ของอนิเมะไม่ถูกต้อง")
+}
+
 func notFoundAnime(w http.ResponseWriter) {
 	response.Error(w, http.StatusNotFound, "ไม่พบอนิเมะเรื่องนี้")
 }

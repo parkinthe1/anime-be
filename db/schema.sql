@@ -28,11 +28,14 @@ CREATE TABLE IF NOT EXISTS anime (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
+-- หมายเหตุ: ข้อมูลอนิเมะที่คนทั่วไปเห็นมาจาก TENRAI ที่ FE ดึงเอง reviews / votes / wishlist_items จึงเก็บแค่ anime_id (= mal_id ของ TENRAI)
+-- ไม่อ้างอิงตาราง anime (ตาราง anime ใช้เป็นรายการของทีมที่ admin จัดการ) ถ้าฐานข้อมูลถูกสร้างไปแล้วให้รัน db/migrate-tenrai-ids.sql
+
 -- รีวิว: สมาชิก 1 คนรีวิวเรื่องเดียวกันได้หลายครั้ง (ตรงกับ docs/api-contract.md ที่ไม่มี endpoint แก้รีวิว)
 CREATE TABLE IF NOT EXISTS reviews (
     id         BIGSERIAL PRIMARY KEY,
     member_id  BIGINT NOT NULL REFERENCES members (id) ON DELETE CASCADE,
-    anime_id   BIGINT NOT NULL REFERENCES anime (id)   ON DELETE CASCADE,
+    anime_id   BIGINT NOT NULL,                                 -- mal_id ของ TENRAI (ไม่ผูก FK กับตาราง anime)
     text       TEXT   NOT NULL CHECK (char_length(text) >= 10),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -41,7 +44,7 @@ CREATE INDEX IF NOT EXISTS idx_reviews_anime ON reviews (anime_id, created_at DE
 -- คะแนน 1-10: 1 คน 1 เรื่อง 1 คะแนน (โหวตใหม่ = แก้คะแนนเดิม)
 CREATE TABLE IF NOT EXISTS votes (
     member_id  BIGINT   NOT NULL REFERENCES members (id) ON DELETE CASCADE,
-    anime_id   BIGINT   NOT NULL REFERENCES anime (id)   ON DELETE CASCADE,
+    anime_id   BIGINT   NOT NULL,                               -- mal_id ของ TENRAI (ไม่ผูก FK กับตาราง anime)
     score      SMALLINT NOT NULL CHECK (score BETWEEN 1 AND 10),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
@@ -51,7 +54,7 @@ CREATE INDEX IF NOT EXISTS idx_votes_anime ON votes (anime_id);
 
 CREATE TABLE IF NOT EXISTS wishlist_items (
     member_id BIGINT NOT NULL REFERENCES members (id) ON DELETE CASCADE,
-    anime_id  BIGINT NOT NULL REFERENCES anime (id)   ON DELETE CASCADE,
+    anime_id  BIGINT NOT NULL,                                  -- mal_id ของ TENRAI (ไม่ผูก FK กับตาราง anime)
     added_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     PRIMARY KEY (member_id, anime_id)
 );
