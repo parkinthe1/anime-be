@@ -21,7 +21,7 @@ type topVotedItem struct {
 }
 
 type statsResponse struct {
-	Anime         int             `json:"anime"`
+	Overrides     int             `json:"overrides"` // จำนวนอนิเมะที่ admin แก้ข้อมูลทับของ TENRAI
 	Members       int             `json:"members"`
 	Admins        int             `json:"admins"`
 	Votes         int             `json:"votes"`
@@ -36,12 +36,12 @@ func (h *Handler) AdminStats(w http.ResponseWriter, r *http.Request) {
 	s := statsResponse{TopVoted: make([]topVotedItem, 0), NewestMembers: make([]models.Member, 0)}
 
 	err := h.DB.QueryRowContext(ctx, `
-		SELECT (SELECT COUNT(*) FROM anime),
+		SELECT (SELECT COUNT(*) FROM anime_overrides),
 		       (SELECT COUNT(*) FROM members),
 		       (SELECT COUNT(*) FROM members WHERE role = 'admin'),
 		       (SELECT COUNT(*) FROM votes),
 		       (SELECT COUNT(*) FROM wishlist_items)`,
-	).Scan(&s.Anime, &s.Members, &s.Admins, &s.Votes, &s.WishlistItems)
+	).Scan(&s.Overrides, &s.Members, &s.Admins, &s.Votes, &s.WishlistItems)
 	if err != nil {
 		serverError(w, err)
 		return

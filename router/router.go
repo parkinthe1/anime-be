@@ -27,6 +27,7 @@ func New(h *handlers.Handler, a *middleware.Authenticator, corsOrigins []string)
 	mux.HandleFunc("GET /api/anime/{id}", h.GetAnime)
 	mux.HandleFunc("GET /api/anime/{id}/reviews", h.ListReviews)
 	mux.HandleFunc("GET /api/anime/{id}/stats", h.AnimeStats)
+	mux.HandleFunc("GET /api/anime-overrides", h.ListOverrides)
 
 	// ---------- member ----------
 	mux.Handle("GET /api/me", member(h.GetMe))
@@ -42,10 +43,8 @@ func New(h *handlers.Handler, a *middleware.Authenticator, corsOrigins []string)
 	mux.Handle("GET /api/admin/stats", admin(h.AdminStats))
 	mux.Handle("GET /api/admin/members", admin(h.AdminMembers))
 	mux.Handle("PUT /api/admin/members/{id}/role", admin(h.AdminSetRole))
-	mux.Handle("GET /api/admin/anime/{id}", admin(h.AdminGetAnime))
-	mux.Handle("POST /api/admin/anime", admin(h.AdminCreateAnime))
-	mux.Handle("PUT /api/admin/anime/{id}", admin(h.AdminUpdateAnime))
-	mux.Handle("DELETE /api/admin/anime/{id}", admin(h.AdminDeleteAnime))
+	mux.Handle("PUT /api/admin/anime-overrides/{id}", admin(h.AdminPutOverride))
+	mux.Handle("DELETE /api/admin/anime-overrides/{id}", admin(h.AdminDeleteOverride))
 
 	// เส้นทางที่ไม่มีอยู่ ตอบเป็น JSON เหมือน endpoint อื่น
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

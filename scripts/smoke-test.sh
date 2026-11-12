@@ -40,7 +40,8 @@ check "member ดู wishlist"              200 "$(code "$BASE/api/me/wishlist" 
 check "member ลบ wishlist (TENRAI)"     204 "$(code -X DELETE "$BASE/api/me/wishlist/52991" -H "$AUTH")"
 check "member ลบ wishlist"              204 "$(code -X DELETE "$BASE/api/me/wishlist/1" -H "$AUTH")"
 check "member เข้า admin ได้ 403"       403 "$(code "$BASE/api/admin/stats" -H "$AUTH")"
-check "member เพิ่มอนิเมะ ได้ 403"      403 "$(code -X POST "$BASE/api/admin/anime" -H "$AUTH" -H 'Content-Type: application/json' -d '{"title":"x"}')"
+check "member แก้ข้อมูลอนิเมะ ได้ 403"  403 "$(code -X PUT "$BASE/api/admin/anime-overrides/1" -H "$AUTH" -H 'Content-Type: application/json' -d '{"titleTh":"x"}')"
+check "guest ดูข้อมูลที่ admin แก้"     200 "$(code "$BASE/api/anime-overrides")"
 check "token ปลอม"                      401 "$(code "$BASE/api/me" -H 'Authorization: Bearer fake.token.value')"
 
 if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
@@ -48,7 +49,10 @@ if [ -n "$ADMIN_EMAIL" ] && [ -n "$ADMIN_PASSWORD" ]; then
   AAUTH="Authorization: Bearer $ATOKEN"
   check "admin ดู stats"                200 "$(code "$BASE/api/admin/stats" -H "$AAUTH")"
   check "admin ดูรายชื่อสมาชิก"         200 "$(code "$BASE/api/admin/members" -H "$AAUTH")"
-  check "admin เพิ่มอนิเมะ ไม่มีชื่อ"   400 "$(code -X POST "$BASE/api/admin/anime" -H "$AAUTH" -H 'Content-Type: application/json' -d '{"title":""}')"
+  check "admin แก้ข้อมูล ทุกช่องว่าง"   400 "$(code -X PUT "$BASE/api/admin/anime-overrides/52991" -H "$AAUTH" -H 'Content-Type: application/json' -d '{"titleTh":""}')"
+  check "admin แก้ข้อมูล โปสเตอร์ผิด"   400 "$(code -X PUT "$BASE/api/admin/anime-overrides/52991" -H "$AAUTH" -H 'Content-Type: application/json' -d '{"poster":"javascript:alert(1)"}')"
+  check "admin แก้ชื่อไทย"              200 "$(code -X PUT "$BASE/api/admin/anime-overrides/52991" -H "$AAUTH" -H 'Content-Type: application/json' -d '{"titleTh":"ทดสอบ"}')"
+  check "admin ลบที่แก้ (กลับไปใช้ TENRAI)" 204 "$(code -X DELETE "$BASE/api/admin/anime-overrides/52991" -H "$AAUTH")"
 else
   echo "SKIP  ส่วน admin (ไม่ได้ตั้ง ADMIN_EMAIL / ADMIN_PASSWORD)"
 fi

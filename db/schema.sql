@@ -59,6 +59,18 @@ CREATE TABLE IF NOT EXISTS wishlist_items (
     PRIMARY KEY (member_id, anime_id)
 );
 
+-- ข้อมูลที่ admin แก้ทับข้อมูลอนิเมะของ TENRAI (ชื่อไทย แนว โปสเตอร์ เรื่องย่อ) ช่องที่เป็น NULL = ใช้ของ TENRAI
+CREATE TABLE IF NOT EXISTS anime_overrides (
+    anime_id   BIGINT PRIMARY KEY,                              -- mal_id ของ TENRAI
+    title_th   VARCHAR(255),
+    genre      VARCHAR(50),
+    poster     TEXT,
+    synopsis   TEXT,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CHECK (title_th IS NOT NULL OR genre IS NOT NULL OR poster IS NOT NULL OR synopsis IS NOT NULL)   -- ถ้าไม่แก้อะไรเลยให้ลบแถวทิ้ง
+);
+ALTER TABLE anime_overrides ENABLE ROW LEVEL SECURITY;
+
 -- สำคัญ: Supabase เปิดตารางใน schema public ให้เรียกผ่าน Data API ด้วย anon key ได้
 -- เปิด Row Level Security โดยไม่สร้าง policy = คนนอกอ่าน/เขียนตรง ๆ ไม่ได้ (รวมถึง password_hash)
 -- Go เชื่อมด้วยบทบาท postgres ซึ่งข้าม RLS ได้ จึงใช้งานได้ตามปกติ
