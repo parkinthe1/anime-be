@@ -5,9 +5,9 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"aniwave-be/auth"
-	"aniwave-be/middleware"
-	"aniwave-be/response"
+	"musicken-be/auth"
+	"musicken-be/middleware"
+	"musicken-be/response"
 )
 
 // GET /api/me

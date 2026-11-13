@@ -12,22 +12,47 @@ type Member struct {
 	CreatedAt   time.Time `json:"createdAt"`
 }
 
-type Anime struct {
-	ID       int64    `json:"id"`
-	Title    string   `json:"title"`
-	TitleTh  *string  `json:"titleTh"`
-	Year     *int     `json:"year"`
-	Genre    *string  `json:"genre"`
-	Rating   *float64 `json:"rating"`
-	Episodes *int     `json:"episodes"`
-	Status   string   `json:"status"` // "airing" | "finished" | "upcoming"
-	Poster   *string  `json:"poster"`
-	Synopsis string   `json:"synopsis"`
+type Artist struct {
+	ID        int64   `json:"id"`
+	Name      string  `json:"name"`
+	Bio       *string `json:"bio"`
+	ImageURL  *string `json:"imageUrl"`
+	SongCount int     `json:"songCount"`
+}
+
+type Song struct {
+	ID          int64   `json:"id"`
+	Title       string  `json:"title"`
+	ArtistID    int64   `json:"artistId"`
+	ArtistName  string  `json:"artistName"`
+	Album       *string `json:"album"`
+	Genre       *string `json:"genre"`
+	Year        *int    `json:"year"`
+	DurationSec *int    `json:"durationSec"`
+	CoverURL    *string `json:"coverUrl"`
+	PreviewURL  *string `json:"previewUrl"`
+	ExternalID  *int64  `json:"externalId"`
+}
+
+type Playlist struct {
+	ID          int64     `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	IsPublic    bool      `json:"isPublic"`
+	OwnerID     int64     `json:"ownerId"`
+	OwnerName   string    `json:"ownerName"`
+	CreatedAt   time.Time `json:"createdAt"`
+	SongCount   int       `json:"songCount"`
+	LikeCount   int       `json:"likeCount"`
+}
+
+// PlaylistDetail = Playlist + เพลงเรียงตามลำดับ
+type PlaylistDetail struct {
+	Playlist
+	Songs []Song `json:"songs"`
 }
 
 const (
 	RoleMember = "member"
 	RoleAdmin  = "admin"
 )
-
-var ValidStatuses = map[string]bool{"airing": true, "finished": true, "upcoming": true}

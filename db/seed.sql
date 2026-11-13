@@ -1,20 +1,20 @@
--- ข้อมูลอนิเมะตั้งต้น 12 เรื่อง (ชุดเดียวกับ mock/anime.json ของ FE) รันซ้ำได้ ไม่ซ้ำเรื่องเดิม
--- วิธีใช้: Supabase > SQL Editor > วางไฟล์นี้ > Run (รัน db/schema.sql ก่อน)
+-- ข้อมูลตั้งต้นสำหรับทดลอง (ศิลปินและเพลงสมมติ ไม่ใช่ข้อมูลจริง) รันหลัง schema.sql
+-- ของจริงนำเข้าจาก iTunes ด้วย scripts/import-itunes.mjs
+INSERT INTO artists (name, bio) VALUES
+  ('Demo Band',   'วงตัวอย่างสำหรับทดสอบระบบ'),
+  ('Sample Voice', 'ศิลปินตัวอย่างแนวป๊อป'),
+  ('Test Beats',   'โปรดิวเซอร์ตัวอย่างแนวอิเล็กทรอนิกส์')
+ON CONFLICT DO NOTHING;
 
-INSERT INTO anime (id, title, title_th, year, genre, rating, episodes, status, poster, synopsis) VALUES
-  (1, 'Fullmetal Alchemist: Brotherhood', 'แขนกลคนแปรธาตุ บราเธอร์ฮูด', 2009, 'Action', 9.1, 64, 'finished', NULL, 'สองพี่น้องตระกูลเอลริกออกตามหาศิลาอาถรรพ์เพื่อเอาร่างกายที่เสียไปจากการแปรธาตุต้องห้ามกลับคืนมา'),
-  (2, 'Sousou no Frieren', 'คำอำลาของฟรีเรน', 2023, 'Fantasy', 9.3, 28, 'finished', NULL, 'หลังจากเอาชนะจอมมารได้ เอลฟ์ผู้มีชีวิตยืนยาวออกเดินทางอีกครั้งเพื่อเข้าใจความหมายของเวลาที่เคยใช้ร่วมกับเพื่อนมนุษย์'),
-  (3, 'Spy x Family', 'สปาย x แฟมิลี่', 2022, 'Comedy', 8.6, 25, 'finished', NULL, 'สายลับ นักฆ่า และเด็กหญิงอ่านใจได้ ต้องปลอมเป็นครอบครัวเดียวกันโดยไม่ให้ใครรู้ความลับของกันและกัน'),
-  (4, 'Kimetsu no Yaiba', 'ดาบพิฆาตอสูร', 2019, 'Action', 8.4, 26, 'finished', NULL, 'ทันจิโร่ออกเดินทางเป็นนักล่าอสูรเพื่อหาทางเปลี่ยนน้องสาวที่กลายเป็นอสูรให้กลับเป็นมนุษย์'),
-  (5, 'Jujutsu Kaisen', 'มหาเวทย์ผนึกมาร', 2020, 'Action', 8.6, 24, 'finished', NULL, 'นักเรียนมัธยมกลืนนิ้วต้องคำสาปเข้าไป และถูกดึงเข้าสู่โลกของนักเวทย์ที่ต่อสู้กับคำสาป'),
-  (6, 'Shingeki no Kyojin', 'ผ่าพิภพไททัน', 2013, 'Drama', 8.5, 25, 'finished', NULL, 'มนุษยชาติหลบอยู่หลังกำแพงสูงเพื่อหนีไททันยักษ์ จนกระทั่งกำแพงถูกทำลายลง'),
-  (7, 'One Piece', 'วันพีซ', 1999, 'Adventure', 8.7, 1100, 'airing', NULL, 'ลูฟี่และเหล่าโจรสลัดหมวกฟางออกเดินทางท่องแกรนด์ไลน์เพื่อตามหาสมบัติวันพีซ'),
-  (8, 'Kimi no Na wa.', 'หลับตาฝัน ถึงชื่อเธอ', 2016, 'Romance', 8.8, 1, 'finished', NULL, 'เด็กหนุ่มกับเด็กสาวที่ไม่เคยพบกันสลับร่างกันในความฝัน และพยายามตามหากันและกัน'),
-  (9, 'Cowboy Bebop', 'คาวบอยบีบ็อป', 1998, 'Sci-Fi', 8.8, 26, 'finished', NULL, 'นักล่าค่าหัวกลุ่มหนึ่งล่องยานอวกาศไล่จับเป้าหมาย ขณะที่อดีตของแต่ละคนตามมาหลอกหลอน'),
-  (10, 'Steins;Gate', 'สไตนส์;เกท', 2011, 'Sci-Fi', 9.1, 24, 'finished', NULL, 'นักทดลองสมัครเล่นค้นพบวิธีส่งข้อความย้อนเวลา และต้องรับผลที่ตามมาจากการเปลี่ยนอดีต'),
-  (11, 'Kaguya-sama: Love is War', 'สงครามรักฉบับคุณหนู', 2019, 'Comedy', 8.4, 12, 'finished', NULL, 'ประธานนักเรียนสองคนต่างรอให้อีกฝ่ายสารภาพรักก่อน จึงงัดกลยุทธ์สารพัดมาสู้กัน'),
-  (12, 'Violet Evergarden', 'ไวโอเล็ต เอเวอร์การ์เดน', 2018, 'Drama', 8.5, 13, 'finished', NULL, 'อดีตทหารสาวทำงานเป็นนักเขียนจดหมายแทนผู้อื่น เพื่อทำความเข้าใจความหมายของคำว่ารักที่ผู้บังคับบัญชาทิ้งไว้')
-ON CONFLICT (id) DO NOTHING;
-
--- ให้เลข id ของเรื่องที่ admin เพิ่มใหม่ ต่อจากเลขที่มีอยู่ (ไม่ชนกับข้อมูลตั้งต้น)
-SELECT setval(pg_get_serial_sequence('anime', 'id'), (SELECT MAX(id) FROM anime));
+INSERT INTO songs (title, artist_id, album, genre, year, duration_sec)
+SELECT v.title, a.id, v.album, v.genre, v.year, v.dur
+FROM (VALUES
+  ('Morning Demo',  'Demo Band',    'First Take',   'Rock', 2021, 215),
+  ('Night Sample',  'Demo Band',    'First Take',   'Rock', 2021, 198),
+  ('Hello Test',    'Sample Voice', 'Sound Check',  'Pop',  2022, 187),
+  ('Fake Love',     'Sample Voice', 'Sound Check',  'Pop',  2022, 204),
+  ('Loop One',      'Test Beats',   'Loops',        'Electronic', 2023, 240),
+  ('Loop Two',      'Test Beats',   'Loops',        'Electronic', 2023, 252)
+) AS v(title, artist, album, genre, year, dur)
+JOIN artists a ON lower(a.name) = lower(v.artist)
+WHERE NOT EXISTS (SELECT 1 FROM songs s WHERE s.title = v.title AND s.artist_id = a.id);

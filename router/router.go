@@ -5,9 +5,9 @@ package router
 import (
 	"net/http"
 
-	"aniwave-be/handlers"
-	"aniwave-be/middleware"
-	"aniwave-be/response"
+	"musicken-be/handlers"
+	"musicken-be/middleware"
+	"musicken-be/response"
 )
 
 func New(h *handlers.Handler, a *middleware.Authenticator, corsOrigins []string) http.Handler {
@@ -23,28 +23,44 @@ func New(h *handlers.Handler, a *middleware.Authenticator, corsOrigins []string)
 	// ---------- guest ----------
 	mux.HandleFunc("POST /api/auth/register", h.Register)
 	mux.HandleFunc("POST /api/auth/login", h.Login)
-	mux.HandleFunc("GET /api/anime", h.ListAnime)
-	mux.HandleFunc("GET /api/anime/{id}", h.GetAnime)
-	mux.HandleFunc("GET /api/anime/{id}/reviews", h.ListReviews)
-	mux.HandleFunc("GET /api/anime/{id}/stats", h.AnimeStats)
-	mux.HandleFunc("GET /api/anime-overrides", h.ListOverrides)
+	mux.HandleFunc("GET /api/songs", h.ListSongs)
+	mux.HandleFunc("GET /api/songs/{id}", h.GetSong)
+	mux.HandleFunc("GET /api/genres", h.ListGenres)
+	mux.HandleFunc("GET /api/artists", h.ListArtists)
+	mux.HandleFunc("GET /api/artists/{id}", h.GetArtist)
+	mux.HandleFunc("GET /api/playlists", h.ListPublicPlaylists)
+	mux.HandleFunc("GET /api/playlists/{id}", h.GetPublicPlaylist)
 
 	// ---------- member ----------
 	mux.Handle("GET /api/me", member(h.GetMe))
 	mux.Handle("PUT /api/me", member(h.UpdateMe))
 	mux.Handle("PUT /api/me/password", member(h.ChangePassword))
-	mux.Handle("POST /api/anime/{id}/reviews", member(h.CreateReview))
-	mux.Handle("PUT /api/anime/{id}/vote", member(h.PutVote))
-	mux.Handle("GET /api/me/wishlist", member(h.ListWishlist))
-	mux.Handle("PUT /api/me/wishlist/{id}", member(h.AddWishlist))
-	mux.Handle("DELETE /api/me/wishlist/{id}", member(h.RemoveWishlist))
+	mux.Handle("GET /api/me/playlists", member(h.ListMyPlaylists))
+	mux.Handle("POST /api/me/playlists", member(h.CreatePlaylist))
+	mux.Handle("GET /api/me/playlists/{id}", member(h.GetMyPlaylist))
+	mux.Handle("PUT /api/me/playlists/{id}", member(h.UpdatePlaylist))
+	mux.Handle("DELETE /api/me/playlists/{id}", member(h.DeletePlaylist))
+	mux.Handle("PUT /api/me/playlists/{id}/songs/{songId}", member(h.AddSongToPlaylist))
+	mux.Handle("DELETE /api/me/playlists/{id}/songs/{songId}", member(h.RemoveSongFromPlaylist))
+	mux.Handle("PUT /api/me/playlists/{id}/order", member(h.ReorderPlaylist))
+	mux.Handle("PUT /api/playlists/{id}/like", member(h.LikePlaylist))
+	mux.Handle("DELETE /api/playlists/{id}/like", member(h.UnlikePlaylist))
+	mux.Handle("GET /api/me/likes", member(h.ListMyLikes))
+	mux.Handle("POST /api/songs/{id}/play", member(h.RecordPlay))
+	mux.Handle("GET /api/me/history", member(h.ListHistory))
 
 	// ---------- admin ----------
 	mux.Handle("GET /api/admin/stats", admin(h.AdminStats))
 	mux.Handle("GET /api/admin/members", admin(h.AdminMembers))
 	mux.Handle("PUT /api/admin/members/{id}/role", admin(h.AdminSetRole))
-	mux.Handle("PUT /api/admin/anime-overrides/{id}", admin(h.AdminPutOverride))
-	mux.Handle("DELETE /api/admin/anime-overrides/{id}", admin(h.AdminDeleteOverride))
+	mux.Handle("POST /api/admin/songs", admin(h.AdminCreateSong))
+	mux.Handle("PUT /api/admin/songs/{id}", admin(h.AdminUpdateSong))
+	mux.Handle("DELETE /api/admin/songs/{id}", admin(h.AdminDeleteSong))
+	mux.Handle("POST /api/admin/artists", admin(h.AdminCreateArtist))
+	mux.Handle("PUT /api/admin/artists/{id}", admin(h.AdminUpdateArtist))
+	mux.Handle("DELETE /api/admin/artists/{id}", admin(h.AdminDeleteArtist))
+	mux.Handle("GET /api/admin/playlists", admin(h.AdminListPlaylists))
+	mux.Handle("DELETE /api/admin/playlists/{id}", admin(h.AdminDeletePlaylist))
 
 	// เส้นทางที่ไม่มีอยู่ ตอบเป็น JSON เหมือน endpoint อื่น
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {

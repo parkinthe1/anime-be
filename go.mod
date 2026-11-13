@@ -1,4 +1,4 @@
-module aniwave-be
+module musicken-be
 
 go 1.22
 

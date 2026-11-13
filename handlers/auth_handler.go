@@ -7,9 +7,9 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"aniwave-be/auth"
-	"aniwave-be/models"
-	"aniwave-be/response"
+	"musicken-be/auth"
+	"musicken-be/models"
+	"musicken-be/response"
 )
 
 // POST /api/auth/register -> 201 สมาชิกใหม่

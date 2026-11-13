@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"aniwave-be/auth"
-	"aniwave-be/models"
-	"aniwave-be/response"
+	"musicken-be/auth"
+	"musicken-be/models"
+	"musicken-be/response"
 )
 
 type contextKey string

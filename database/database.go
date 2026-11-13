@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"aniwave-be/auth"
+	"musicken-be/auth"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/stdlib"

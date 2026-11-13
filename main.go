@@ -1,4 +1,4 @@
-// AniWave API: backend (Go) ของเว็บอนิเมะ ต่อกับ FE (React) ตาม docs/api-contract.md
+// MusicKen API: backend (Go) ของเว็บเพลง MusicKen ต่อกับ FE (React) ตาม docs/api-contract.md
 package main
 
 import (
@@ -11,12 +11,12 @@ import (
 	"syscall"
 	"time"
 
-	"aniwave-be/auth"
-	"aniwave-be/config"
-	"aniwave-be/database"
-	"aniwave-be/handlers"
-	"aniwave-be/middleware"
-	"aniwave-be/router"
+	"musicken-be/auth"
+	"musicken-be/config"
+	"musicken-be/database"
+	"musicken-be/handlers"
+	"musicken-be/middleware"
+	"musicken-be/router"
 )
 
 func main() {
@@ -55,7 +55,7 @@ func main() {
 	}
 
 	go func() {
-		log.Printf("AniWave API พร้อมที่พอร์ต %s", cfg.Port)
+		log.Printf("MusicKen API พร้อมที่พอร์ต %s", cfg.Port)
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("server: %v", err)
 		}
